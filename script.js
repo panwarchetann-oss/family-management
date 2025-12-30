@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// 🔴 YAHAN firebaseConfig paste hoga (next step)
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAtPPp9ImgOI8n4Zxi07aBConpZi4823bU",
@@ -15,6 +15,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 window.recaptchaVerifier = new RecaptchaVerifier(
   'recaptcha-container',
@@ -32,15 +33,24 @@ window.sendOTP = function () {
       alert("OTP sent");
     })
     .catch((error) => {
-      alert(error.message);
+      alert(error. message);
     });
 }
 
 window.verifyOTP = function () {
   const otp = document.getElementById("otp").value;
   confirmationResult.confirm(otp)
-    .then(() => {
+  .then(async () => {
       alert("Login success");
+    
+      const phone = document.getElementById("phone").value;
+      await setDoc(doc(db, "users", phone), {
+        phone: phone,
+        dob: "",
+        bloodGroup: "",
+        name: ""
+      });
+
     })
     .catch(() => {
       alert("Wrong OTP");
