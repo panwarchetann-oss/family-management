@@ -37,22 +37,28 @@ window.sendOTP = function () {
     });
 }
 
-window.verifyOTP = function () {
+window.verifyOTP = async function () {
   const otp = document.getElementById("otp").value;
-  confirmationResult.confirm(otp)
-  .then(async () => {
-      alert("Login success");
-    
-      const phone = document.getElementById("phone").value;
-      await setDoc(doc(db, "users", phone), {
-        phone: phone,
-        dob: "",
-        bloodGroup: "",
-        name: ""
-      });
 
-    })
-    .catch(() => {
-      alert("Wrong OTP");
+  try {
+    const result = await confirmationResult.confirm(otp);
+    alert("Login success");
+
+    const phone = document.getElementById("phone").value;
+
+    console.log("Saving to Firestore:", phone);
+
+    await setDoc(doc(db, "users", phone), {
+      phone: phone,
+      name: "",
+      dob: "",
+      bloodGroup: ""
     });
-}
+
+    console.log("Data saved successfully");
+
+  } catch (error) {
+    console.error("Error:", error);
+    alert(error.message);
+  }
+};
