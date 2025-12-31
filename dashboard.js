@@ -2,9 +2,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebas
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/* 🔹 SAME firebaseConfig jo index/script.js me hai */
+/* Firebase config */
 const firebaseConfig = {
-  apiKey: "AIzaSy....",
+  apiKey: "AIzaSyAtPPp9ImgOI8n4Zxi07aBConpZi4823bU",
   authDomain: "family-management-bd626.firebaseapp.com",
   projectId: "family-management-bd626",
   storageBucket: "family-management-bd626.appspot.com",
@@ -12,40 +12,25 @@ const firebaseConfig = {
   appId: "1:783709611700:web:e3d1f267f6ab568b5d59e1"
 };
 
-/* ✅ STEP 1: initialize app FIRST */
+/* Initialize Firebase */
 const app = initializeApp(firebaseConfig);
-
-/* ✅ STEP 2: then auth & db */
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* UI elements */
-const loading = document.getElementById("loading");
-const adminPanel = document.getElementById("adminPanel");
-const memberPanel = document.getElementById("memberPanel");
-
-/* ✅ STEP 3: auth check */
+/* Check auth state */
 onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "index.html";
-    return;
-  }
+  if (!user) { window.location.href = "index.html"; return; }
 
-  try {
-    const phone = user.phoneNumber;
-    const snap = await getDoc(doc(db, "users", phone));
+  const phone = user.phoneNumber;
 
-    loading.style.display = "none";
+  const docRef = doc(db, "users", phone);
+  const docSnap = await getDoc(docRef);
+  let role = "member";
+  if (docSnap.exists()) role = docSnap.data().role;
 
-    if (snap.exists() && snap.data().role === "admin") {
-      adminPanel.style.display = "block";
-    } else {
-      memberPanel.style.display = "block";
-    }
+  document.getElementById("welcome").innerText = `Welcome ${role}`;
 
-  } catch (err) {
-    loading.innerText = "Error loading data";
-    console.error(err);
+  if (role === "admin") {
+    document.getElementById("adminPanel").style.display = "block";
   }
 });
-
