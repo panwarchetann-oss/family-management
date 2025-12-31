@@ -1,9 +1,10 @@
-// 🔹 Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
   getAuth,
+  RecaptchaVerifier,
   signInWithPhoneNumber,
-  RecaptchaVerifier
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import {
   getFirestore,
@@ -11,79 +12,97 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// 🔹 Admin phone number (APNA NUMBER DAALO)
-const ADMIN_PHONE = "+916265235974"; // example
-
-// 🔹 Firebase config
+/* 🔹 Firebase Config (APNA HI REHNA CHAHIYE) */
 const firebaseConfig = {
   apiKey: "AIzaSyAtPPp9ImgOI8n4Zxi07aBConpZi4823bU",
   authDomain: "family-management-bd626.firebaseapp.com",
   projectId: "family-management-bd626",
-  storageBucket: "family-management-bd626.firebasestorage.app",
+  storageBucket: "family-management-bd626.appspot.com",
   messagingSenderId: "783709611700",
-  appId: "1:783709611700:web:e3d1f267f6ab568b5d59e1",
-  measurementId: "G-HXQCLRQ9PZ"
+  appId: "1:783709611700:web:e3d1f267f6ab568b5d59e1"
 };
 
-// 🔹 Initialize Firebase
+/* 🔹 ADMIN NUMBER (EXACT FORMAT) */
+const ADMIN_PHONE = "+916265235974";
+
+/* ✅ Initialize Firebase */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// 🔹 Setup Recaptcha
-window.setupRecaptcha = function () {
-  window.recaptchaVerifier = new RecaptchaVerifier(
-    "recaptcha-container",
-    { size: "invisible" },
-    auth
-  );
-};
+/* ✅ VERY IMPORTANT: Auth Persistence */
+setPersistence(auth, browserLocalPersistence);
 
-// 🔹 Send OTP
-window.sendOTP = function () {
-  const phone = document.getElementById("phone").value;
-  setupRecaptcha();
+/* UI elements */
+const phoneInput = document.getElementById("phone");
+const otpInput = document.getElementById("otp");
+const sendOtpBtn = document.getElementById("sendOtp");
+const verifyOtpBtn = document.getElementById("verifyOtp");
 
-  signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
-    .then((confirmationResult) => {
-      window.confirmationResult = confirmationResult;
-      alert("OTP sent");
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-};
+/* 🔹 Setup Recaptcha */
+window.recaptchaVerifier = new RecaptchaVerifier(
+  "recaptcha-container",
+  { size: "invisible" },
+  auth
+);
 
-// 🔹 Verify OTP + Save user + Redirect
-window.verifyOTP = async function () {
-  const otp = document.getElementById("otp").value;
+/* 🔹 SEND OTP */
+sendOtpBtn.addEventListener("click", async () => {
+  const phone = phoneInput.value.trim();
+
+  if (!phone.startsWith("+")) {
+    alert("+916265235974");
+    return;
+  }
 
   try {
-    // OTP verify
-    await window.confirmationResult.confirm(otp);
-    alert("Login success");
+    window.confirmationResult = await signInWithPhoneNumber(
+      auth,
+      phone,
+      window.recaptchaVerifier
+    );
+    alert("OTP sent successfully");
+  } catch (error) {
+    alert(error.message);
+  }
+});
 
-    const phone = document.getElementById("phone").value;
+/* 🔹 VERIFY OTP */
+verifyOtpBtn.addEventListener("click", async () => {
+  const otp = otpInput.value.trim();
+
+  if (!otp) {
+    alert("OTP daalo");
+    return;
+  }
+
+  try {
+    const result = await window.confirmationResult.confirm(otp);
+    const user = result.user;
+
+    const phone = user.phoneNumber;
     const role = phone === ADMIN_PHONE ? "admin" : "member";
 
-    // Save user in Firestore
+    /* 🔹 Save / Update user in Firestore */
     await setDoc(
       doc(db, "users", phone),
       {
         phone: phone,
         role: role,
-        name: "",
-        dob: "",
-        bloodGroup: ""
+        lastLogin: new Date()
       },
       { merge: true }
     );
 
-    // 🔁 Redirect to dashboard
+    /* 🔹 Local storage (dashboard use karega) */
+    localStorage.setItem("userPhone", phone);
+
+    alert("Login successful");
+
+    /* ✅ FINAL REDIRECT */
     window.location.href = "dashboard.html";
 
   } catch (error) {
-    alert(error.message);
+    alert("Invalid OTP");
   }
-};
-
+});
