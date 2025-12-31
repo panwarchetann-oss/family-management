@@ -1,8 +1,12 @@
+// 🔹 Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// 🔹 Admin phone number
+const ADMIN_PHONE = "+916265235974";
+
+// 🔹 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAtPPp9ImgOI8n4Zxi07aBConpZi4823bU",
   authDomain: "family-management-bd626.firebaseapp.com",
@@ -13,52 +17,63 @@ const firebaseConfig = {
   measurementId: "G-HXQCLRQ9PZ"
 };
 
+// 🔹 Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-window.recaptchaVerifier = new RecaptchaVerifier(
-  'recaptcha-container',
-  { size: 'normal' },
-  auth
-);
+// 🔹 Setup Recaptcha
+window.setupRecaptcha = function () {
+  window.recaptchaVerifier = new RecaptchaVerifier(
+    "recaptcha-container",
+    { size: "invisible" },
+    auth
+  );
+};
 
-let confirmationResult;
-
+// 🔹 Send OTP
 window.sendOTP = function () {
-  const phone = "+91" + document.getElementById("phone").value;
+  const phone = document.getElementById("phone").value;
+  setupRecaptcha();
+
   signInWithPhoneNumber(auth, phone, window.recaptchaVerifier)
-    .then((result) => {
-      confirmationResult = result;
+    .then((confirmationResult) => {
+      window.confirmationResult = confirmationResult;
       alert("OTP sent");
     })
     .catch((error) => {
-      alert(error. message);
+      alert(error.message);
     });
-}
+};
 
+// 🔹 Verify OTP + Save User
 window.verifyOTP = async function () {
   const otp = document.getElementById("otp").value;
 
   try {
-    const result = await confirmationResult.confirm(otp);
+    await window.confirmationResult.confirm(otp);
     alert("Login success");
 
     const phone = document.getElementById("phone").value;
+    const role = phone === ADMIN_PHONE ? "admin" : "member";
 
-    console.log("Saving to Firestore:", phone);
+    await setDoc(
+      doc(db, "users", phone),
+      {
+        phone: phone,
+        role: role,
+        name: "",
+        dob: "",
+        bloodGroup: ""
+      },
+      { merge: true }
+    );
 
-    await setDoc(doc(db, "users", phone), {
-      phone: phone,
-      name: "",
-      dob: "",
-      bloodGroup: ""
-    });
-
-    console.log("Data saved successfully");
+    // 🔁 redirect next (dashboard baad me banayenge)
+    // window.location.href = "dashboard.html";
 
   } catch (error) {
-    console.error("Error:", error);
     alert(error.message);
   }
 };
+
