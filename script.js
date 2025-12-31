@@ -12,7 +12,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 // 🔹 Admin phone number (APNA NUMBER DAALO)
-const ADMIN_PHONE = "+919876543210"; // example
+const ADMIN_PHONE = "+916265235974"; // example
 
 // 🔹 Firebase config
 const firebaseConfig = {
