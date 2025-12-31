@@ -1,4 +1,3 @@
-/* 🔹 Firebase imports */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
   getAuth,
@@ -13,7 +12,7 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/* 🔹 Firebase config */
+/* Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyAtPPp9ImgOI8n4Zxi07aBConpZi4823bU",
   authDomain: "family-management-bd626.firebaseapp.com",
@@ -23,37 +22,34 @@ const firebaseConfig = {
   appId: "1:783709611700:web:e3d1f267f6ab568b5d59e1"
 };
 
-/* 🔹 Admin phone (exact format) */
-const ADMIN_PHONE = "+916265235974"; // <-- change to your number
+/* Admin phone */
+const ADMIN_PHONE = "+916265235974"; // <-- set your number
 
-/* 🔹 Initialize Firebase */
+/* Initialize Firebase */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* 🔹 Auth persistence */
+/* Auth persistence */
 setPersistence(auth, browserLocalPersistence);
 
-/* 🔹 DOM elements */
+/* DOM elements */
 const phoneInput = document.getElementById("phone");
 const otpInput = document.getElementById("otp");
 const sendOtpBtn = document.getElementById("sendOtp");
 const verifyOtpBtn = document.getElementById("verifyOtp");
 
-/* 🔹 Recaptcha setup */
+/* Recaptcha setup */
 window.recaptchaVerifier = new RecaptchaVerifier(
   "recaptcha-container",
   { size: "invisible", callback: () => console.log("Recaptcha solved") },
   auth
 );
 
-/* 🔹 Send OTP */
+/* Send OTP */
 sendOtpBtn.addEventListener("click", async () => {
   const phone = phoneInput.value.trim();
-  if (!phone.startsWith("+")) {
-    alert("+916265235974");
-    return;
-  }
+  if (!phone.startsWith("+")) { alert("+916265235974"); return; }
 
   try {
     window.confirmationResult = await signInWithPhoneNumber(
@@ -68,38 +64,30 @@ sendOtpBtn.addEventListener("click", async () => {
   }
 });
 
-/* 🔹 Verify OTP */
+/* Verify OTP */
 verifyOtpBtn.addEventListener("click", async () => {
   const otp = otpInput.value.trim();
-  if (!otp) {
-    alert("OTP daalo");
-    return;
-  }
+  if (!otp) { alert("OTP daalo"); return; }
 
   try {
     const result = await window.confirmationResult.confirm(otp);
     const user = result.user;
     const phone = user.phoneNumber;
 
-    /* 🔹 Determine role */
     const role = phone === ADMIN_PHONE ? "admin" : "member";
 
-    /* 🔹 Save/update user in Firestore */
     await setDoc(
       doc(db, "users", phone),
       { phone: phone, role: role, lastLogin: new Date() },
       { merge: true }
     );
 
-    /* 🔹 LocalStorage (optional, dashboard ke liye) */
     localStorage.setItem("userPhone", phone);
-
     alert("Login success");
-
-    /* 🔹 Redirect to dashboard */
     window.location.href = "dashboard.html";
   } catch (err) {
     alert("Invalid OTP");
     console.error(err);
   }
 });
+
