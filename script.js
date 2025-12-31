@@ -106,3 +106,4 @@ verifyOtpBtn.addEventListener("click", async () => {
     alert("Invalid OTP");
   }
 });
+
