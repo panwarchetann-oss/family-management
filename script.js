@@ -1,10 +1,18 @@
 // 🔹 Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+  getAuth,
+  signInWithPhoneNumber,
+  RecaptchaVerifier
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// 🔹 Admin phone number
-const ADMIN_PHONE = "+916265235974";
+// 🔹 Admin phone number (APNA NUMBER DAALO)
+const ADMIN_PHONE = "+919876543210"; // example
 
 // 🔹 Firebase config
 const firebaseConfig = {
@@ -46,17 +54,19 @@ window.sendOTP = function () {
     });
 };
 
-// 🔹 Verify OTP + Save User
+// 🔹 Verify OTP + Save user + Redirect
 window.verifyOTP = async function () {
   const otp = document.getElementById("otp").value;
 
   try {
+    // OTP verify
     await window.confirmationResult.confirm(otp);
     alert("Login success");
 
     const phone = document.getElementById("phone").value;
     const role = phone === ADMIN_PHONE ? "admin" : "member";
 
+    // Save user in Firestore
     await setDoc(
       doc(db, "users", phone),
       {
@@ -69,8 +79,8 @@ window.verifyOTP = async function () {
       { merge: true }
     );
 
-    // 🔁 redirect next (dashboard baad me banayenge)
-    // window.location.href = "dashboard.html";
+    // 🔁 Redirect to dashboard
+    window.location.href = "dashboard.html";
 
   } catch (error) {
     alert(error.message);
