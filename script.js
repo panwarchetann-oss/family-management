@@ -1,3 +1,4 @@
+/* 🔹 Firebase imports */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import {
   getAuth,
@@ -12,7 +13,7 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/* 🔹 Firebase Config (APNA HI REHNA CHAHIYE) */
+/* 🔹 Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyAtPPp9ImgOI8n4Zxi07aBConpZi4823bU",
   authDomain: "family-management-bd626.firebaseapp.com",
@@ -22,34 +23,33 @@ const firebaseConfig = {
   appId: "1:783709611700:web:e3d1f267f6ab568b5d59e1"
 };
 
-/* 🔹 ADMIN NUMBER (EXACT FORMAT) */
-const ADMIN_PHONE = "+916265235974";
+/* 🔹 Admin phone (exact format) */
+const ADMIN_PHONE = "+916265235974"; // <-- change to your number
 
-/* ✅ Initialize Firebase */
+/* 🔹 Initialize Firebase */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ✅ VERY IMPORTANT: Auth Persistence */
+/* 🔹 Auth persistence */
 setPersistence(auth, browserLocalPersistence);
 
-/* UI elements */
+/* 🔹 DOM elements */
 const phoneInput = document.getElementById("phone");
 const otpInput = document.getElementById("otp");
 const sendOtpBtn = document.getElementById("sendOtp");
 const verifyOtpBtn = document.getElementById("verifyOtp");
 
-/* 🔹 Setup Recaptcha */
+/* 🔹 Recaptcha setup */
 window.recaptchaVerifier = new RecaptchaVerifier(
   "recaptcha-container",
-  { size: "invisible" },
+  { size: "invisible", callback: () => console.log("Recaptcha solved") },
   auth
 );
 
-/* 🔹 SEND OTP */
+/* 🔹 Send OTP */
 sendOtpBtn.addEventListener("click", async () => {
   const phone = phoneInput.value.trim();
-
   if (!phone.startsWith("+")) {
     alert("+916265235974");
     return;
@@ -62,15 +62,15 @@ sendOtpBtn.addEventListener("click", async () => {
       window.recaptchaVerifier
     );
     alert("OTP sent successfully");
-  } catch (error) {
-    alert(error.message);
+  } catch (err) {
+    alert("Error sending OTP: " + err.message);
+    console.error(err);
   }
 });
 
-/* 🔹 VERIFY OTP */
+/* 🔹 Verify OTP */
 verifyOtpBtn.addEventListener("click", async () => {
   const otp = otpInput.value.trim();
-
   if (!otp) {
     alert("OTP daalo");
     return;
@@ -79,31 +79,27 @@ verifyOtpBtn.addEventListener("click", async () => {
   try {
     const result = await window.confirmationResult.confirm(otp);
     const user = result.user;
-
     const phone = user.phoneNumber;
+
+    /* 🔹 Determine role */
     const role = phone === ADMIN_PHONE ? "admin" : "member";
 
-    /* 🔹 Save / Update user in Firestore */
+    /* 🔹 Save/update user in Firestore */
     await setDoc(
       doc(db, "users", phone),
-      {
-        phone: phone,
-        role: role,
-        lastLogin: new Date()
-      },
+      { phone: phone, role: role, lastLogin: new Date() },
       { merge: true }
     );
 
-    /* 🔹 Local storage (dashboard use karega) */
+    /* 🔹 LocalStorage (optional, dashboard ke liye) */
     localStorage.setItem("userPhone", phone);
 
-    alert("Login successful");
+    alert("Login success");
 
-    /* ✅ FINAL REDIRECT */
+    /* 🔹 Redirect to dashboard */
     window.location.href = "dashboard.html";
-
-  } catch (error) {
+  } catch (err) {
     alert("Invalid OTP");
+    console.error(err);
   }
 });
-
