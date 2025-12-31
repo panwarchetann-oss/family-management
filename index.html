@@ -1,23 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Family Management</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Family App Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { padding: 10px; margin: 5px 0; display: block; width: 100%; max-width: 300px; }
+    #recaptcha-container { margin-top: 10px; }
+  </style>
 </head>
 <body>
 
-<h2>Family Login</h2>
+  <h2>Family App Login</h2>
 
-<input id="phone" placeholder="+916265235974" />
-<button onclick="sendOTP()">Send OTP</button>
+  <!-- Phone Input -->
+  <input id="phone" placeholder="+916265235974" />
 
-<br><br>
+  <!-- Send OTP -->
+  <button id="sendOtp">Send OTP</button>
 
-<input id="otp" placeholder="Enter OTP" />
-<button onclick="verifyOTP()">Verify OTP</button>
+  <!-- OTP Input -->
+  <input id="otp" placeholder="Enter OTP" />
 
-<div id="recaptcha-container"></div>
+  <!-- Verify OTP -->
+  <button id="verifyOtp">Verify OTP</button>
 
-<script type="module" src="./script.js"></script>
+  <!-- Invisible Recaptcha -->
+  <div id="recaptcha-container"></div>
+
+  <!-- Script -->
+  <script type="module" src="./script.js"></script>
 
 </body>
 </html>
