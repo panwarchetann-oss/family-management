@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebas
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-/* 🔹 SAME firebaseConfig jo script.js me hai */
 const firebaseConfig = {
   apiKey: "AIzaSyAtPPp9ImgOI8n4Zxi07aBConpZi4823bU",
   authDomain: "family-management-bd626.firebaseapp.com",
@@ -12,41 +11,43 @@ const firebaseConfig = {
   appId: "1:783709611700:web:e3d1f267f6ab568b5d59e1"
 };
 
-/* 🔹 INITIALIZE AGAIN (YEHI MISSING THA) */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 const welcome = document.getElementById("welcome");
 const adminPanel = document.getElementById("adminPanel");
-const addBtn = document.getElementById("addMember");
 
-/* 🔹 CHECK LOGIN STATUS */
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "index.html";
     return;
   }
 
-  /* 🔹 GET ROLE FROM FIRESTORE */
-  const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
+  const phone = user.phoneNumber;
 
-  if (!snap.exists()) {
-    welcome.innerText = "User data not found";
-    return;
-  }
+  try {
+    const userRef = doc(db, "users", phone);
+    const snap = await getDoc(userRef);
 
-  const data = snap.data();
+    if (!snap.exists()) {
+      welcome.innerText = "User not found ❌";
+      return;
+    }
 
-  welcome.innerText = `Welcome ${data.role}`;
+    const data = snap.data();
+    welcome.innerText = `Welcome ${data.role}`;
 
-  if (data.role === "admin") {
-    adminPanel.style.display = "block";
+    if (data.role === "admin") {
+      adminPanel.style.display = "block";
+    }
+
+  } catch (err) {
+    welcome.innerText = "Error loading data";
+    console.error(err);
   }
 });
 
-/* 🔹 BUTTON CLICK */
-addBtn.addEventListener("click", () => {
-  alert("Next step: Add Family Member form yaha banega");
-});
+document.getElementById("addMember").onclick = () => {
+  alert("Next step: Add Family Member form banayenge 👍");
+};
