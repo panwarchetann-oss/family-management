@@ -1,16 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
+<meta charset="UTF-8">
+<title>Family Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 400px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background: #007bff;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+#memberForm {
+  display: none;
+  margin-top: 15px;
+}
+</style>
 </head>
+
 <body>
 
-<h2 id="welcome">Loading...</h2>
+<div class="container">
+  <h2 id="welcome">Loading...</h2>
 
-<!-- Admin Panel -->
-<div id="adminPanel" style="display:none;">
-  <button id="addMember">Add Family Member</button>
+  <!-- Admin Panel -->
+  <div id="adminPanel" style="display:none;">
+    <button id="addMemberBtn">➕ Add Family Member</button>
+
+    <div id="memberForm">
+      <input id="memberName" placeholder="Member Name">
+      <input id="memberPhone" placeholder="+91XXXXXXXXXX">
+      <button id="saveMember">Save Member</button>
+    </div>
+  </div>
 </div>
 
 <script type="module" src="./dashboard.js"></script>
