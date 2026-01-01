@@ -1,7 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+// 🔹 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAtPPp9ImgOI8n4Zxi07aBConpZi4823bU",
   authDomain: "family-management-bd626.firebaseapp.com",
@@ -15,37 +16,56 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// 🔹 UI Elements
 const welcome = document.getElementById("welcome");
 const adminPanel = document.getElementById("adminPanel");
+const addMemberBtn = document.getElementById("addMemberBtn");
+const memberForm = document.getElementById("memberForm");
+const saveMember = document.getElementById("saveMember");
 
+// 🔹 Auth Check
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "index.html";
     return;
   }
 
-  const phone = user.phoneNumber;
+  const uid = user.uid;
+  const userRef = doc(db, "users", uid);
+  const snap = await getDoc(userRef);
 
-  // 🔹 Check Admin
-  const adminRef = doc(db, "admins", phone);
-  const adminSnap = await getDoc(adminRef);
+  if (snap.exists()) {
+    const role = snap.data().role;
+    welcome.innerText = "Welcome " + role;
 
-  if (adminSnap.exists()) {
-    welcome.innerText = "Welcome Admin";
-    adminPanel.style.display = "block";
-    return;
+    if (role === "admin") {
+      adminPanel.style.display = "block";
+    }
   }
-
-  // 🔹 Check Member
-  const memberRef = doc(db, "members", phone);
-  const memberSnap = await getDoc(memberRef);
-
-  if (memberSnap.exists()) {
-    welcome.innerText = "Welcome Member";
-    return;
-  }
-
-  // ❌ No role found
-  alert("No role found. Contact Admin.");
-  window.location.href = "index.html";
 });
+
+// 🔹 Show form
+addMemberBtn.onclick = () => {
+  memberForm.style.display =
+    memberForm.style.display === "none" ? "block" : "none";
+};
+
+// 🔹 Save member
+saveMember.onclick = async () => {
+  const name = document.getElementById("memberName").value;
+  const phone = document.getElementById("memberPhone").value;
+
+  if (!name || !phone) {
+    alert("Fill all details");
+    return;
+  }
+
+  await setDoc(doc(db, "familyMembers", phone), {
+    name,
+    phone,
+    role: "member"
+  });
+
+  alert("Member added successfully");
+  memberForm.style.display = "none";
+};
