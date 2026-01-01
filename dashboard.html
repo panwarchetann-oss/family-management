@@ -1,46 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Dashboard</title>
-
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    input, button {
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-      max-width: 300px;
-      display: block;
-    }
-    #memberForm {
-      margin-top: 20px;
-      padding: 15px;
-      border: 1px solid #ccc;
-      display: none;
-    }
-  </style>
 </head>
 <body>
 
-  <h2 id="welcome">Loading...</h2>
+<h2 id="welcome">Loading...</h2>
 
-  <!-- Admin Panel -->
-  <div id="adminPanel" style="display:none;">
-    <button id="addMemberBtn">Add Family Member</button>
+<!-- Admin Panel -->
+<div id="adminPanel" style="display:none;">
+  <button id="addMember">Add Family Member</button>
+</div>
 
-    <!-- Add Member Form -->
-    <div id="memberForm">
-      <h3>Add Family Member</h3>
-      <input id="mName" placeholder="Full Name" />
-      <input id="mPhone" placeholder="+91XXXXXXXXXX" />
-      <input id="mDob" type="date" />
-      <input id="mBlood" placeholder="Blood Group (A+, B+ etc)" />
-      <button id="saveMember">Save Member</button>
-    </div>
-  </div>
-
-  <script type="module" src="./dashboard.js"></script>
+<script type="module" src="./dashboard.js"></script>
 </body>
 </html>
