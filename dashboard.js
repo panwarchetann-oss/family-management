@@ -1,68 +1,35 @@
+// 1️⃣ Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+// 2️⃣ Firebase config (SAME jo script.js me hai)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyAtPPp9ImgOI8n4Zxi07aBConpZi4823bU",
+  authDomain: "family-management-bd626.firebaseapp.com",
+  projectId: "family-management-bd626",
+  storageBucket: "family-management-bd626.appspot.com",
+  messagingSenderId: "783709611700",
+  appId: "1:783709611700:web:e3d1f267f6ab568b5d59e1"
 };
 
+// 3️⃣ Initialize Firebase (MOST IMPORTANT)
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Elements
+// 4️⃣ HTML elements
 const welcome = document.getElementById("welcome");
 const adminPanel = document.getElementById("adminPanel");
-const addMemberBtn = document.getElementById("addMemberBtn");
-const addMemberForm = document.getElementById("addMemberForm");
-const saveMember = document.getElementById("saveMember");
 
-// Auth check
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "index.html";
-    return;
-  }
-
-  const ref = doc(db, "users", user.uid);
-  const snap = await getDoc(ref);
-
-  if (!snap.exists()) {
-    welcome.innerText = "User not found";
-    return;
-  }
-
-  const data = snap.data();
-  welcome.innerText = "Welcome " + data.role;
-
-  if (data.role === "admin") {
+// 5️⃣ LOGIN CHECK (YE SAB FIX KAREGA)
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // ✅ User logged in
+    welcome.innerText = "Welcome " + user.phoneNumber;
     adminPanel.style.display = "block";
+  } else {
+    // ❌ Login nahi hai → wapas login bhejo
+    window.location.href = "index.html";
   }
-});
-
-// 👉 BUTTON CLICK FIX
-addMemberBtn.addEventListener("click", () => {
-  addMemberForm.style.display = "block";
-});
-
-// Save member
-saveMember.addEventListener("click", async () => {
-  const name = document.getElementById("memberName").value;
-  const phone = document.getElementById("memberPhone").value;
-
-  if (!name || !phone) {
-    alert("Fill all details");
-    return;
-  }
-
-  await setDoc(doc(db, "familyMembers", phone), {
-    name,
-    phone,
-    role: "member"
-  });
-
-  alert("Member added successfully");
-  addMemberForm.style.display = "none";
 });
