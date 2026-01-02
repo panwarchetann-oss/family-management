@@ -2,111 +2,61 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Family Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>Dashboard</title>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6fb;
-    }
-
-    header {
-      background: linear-gradient(135deg, #4f46e5, #6366f1);
-      color: white;
-      padding: 16px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .container {
+      font-family: Arial;
       padding: 20px;
+      background: #f4f6f8;
     }
 
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    }
-
-    .card h3 {
-      margin-top: 0;
+    h2 {
       color: #333;
     }
 
-    .btn {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #4f46e5;
+    button {
+      padding: 10px;
+      background: #007bff;
       color: white;
-      font-size: 16px;
+      border: none;
       cursor: pointer;
       margin-top: 10px;
     }
 
-    .btn.logout {
-      background: #ef4444;
+    button:hover {
+      background: #0056b3;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 5px;
     }
 
     input {
+      padding: 8px;
       width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    #adminPanel {
-      display: none;
-    }
-
-    #addForm {
-      display: none;
+      margin: 5px 0;
     }
   </style>
 </head>
-
 <body>
 
-<header>
-  Family Management Dashboard
-</header>
+<h2 id="welcome">Loading...</h2>
 
-<div class="container">
+<div id="adminPanel" style="display:none;" class="card">
+  <button id="addMemberBtn">Add Family Member</button>
+</div>
 
-  <div class="card">
-    <h3 id="welcome">Loading...</h3>
-  </div>
-
-  <!-- ADMIN PANEL -->
-  <div id="adminPanel" class="card">
-    <h3>Add Family Member</h3>
-
-    <div id="addForm">
-      <input id="name" placeholder="Full Name">
-      <input id="phone" placeholder="+91XXXXXXXXXX">
-      <input id="dob" type="date">
-      <input id="blood" placeholder="Blood Group (e.g. B+)">
-      <button class="btn" id="saveMember">Save Member</button>
-    </div>
-
-    <button class="btn" id="addMemberBtn">+ Add Family Member</button>
-  </div>
-
-  <!-- LOGOUT -->
-  <div class="card">
-    <button class="btn logout" id="logoutBtn">Logout</button>
-  </div>
-
+<!-- Add Member Form -->
+<div id="addMemberForm" class="card" style="display:none;">
+  <h3>Add Family Member</h3>
+  <input id="memberName" placeholder="Member Name">
+  <input id="memberPhone" placeholder="+91XXXXXXXXXX">
+  <button id="saveMember">Save Member</button>
 </div>
 
 <script type="module" src="./dashboard.js"></script>
 </body>
 </html>
-
