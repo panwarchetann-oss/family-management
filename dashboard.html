@@ -1,70 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Family Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      padding: 20px;
+      background: #f2f5f9;
+      margin: 0;
+      padding: 0;
     }
+
+    .header {
+      background: #2c3e50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+    }
+
     .card {
       background: white;
-      padding: 20px;
-      border-radius: 8px;
       max-width: 400px;
-      margin: auto;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    h2 { margin-top: 0; }
+
+    .card h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .info {
+      margin: 10px 0;
+      font-size: 15px;
+      color: #555;
+    }
+
     button {
-      padding: 10px;
       width: 100%;
+      padding: 10px;
       margin-top: 10px;
       border: none;
       border-radius: 5px;
+      font-size: 15px;
       cursor: pointer;
     }
-    .logout {
-      background: #ff4d4d;
+
+    .btn-primary {
+      background: #3498db;
       color: white;
     }
-    .add {
-      background: #4CAF50;
+
+    .btn-danger {
+      background: #e74c3c;
       color: white;
     }
-    input {
-      padding: 10px;
-      width: 100%;
-      margin-top: 8px;
+
+    #adminPanel {
+      display: none;
+      margin-top: 15px;
     }
   </style>
 </head>
+
 <body>
 
-<div class="card">
-  <h2 id="welcome">Loading...</h2>
+<div class="header">Family Management App</div>
 
-  <!-- Logout -->
-  <button class="logout" id="logoutBtn">Logout</button>
+<div class="card">
+  <h3 id="welcome">Loading...</h3>
+
+  <div class="info" id="name"></div>
+  <div class="info" id="phone"></div>
+  <div class="info" id="dob"></div>
+  <div class="info" id="blood"></div>
 
   <!-- Admin Panel -->
-  <div id="adminPanel" style="display:none;">
-    <hr />
-    <h3>Add Family Member</h3>
-
-    <input id="name" placeholder="Name" />
-    <input id="phone" placeholder="+91XXXXXXXXXX" />
-    <input id="dob" type="date" />
-    <input id="blood" placeholder="Blood Group" />
-
-    <button class="add" id="saveMember">Save Member</button>
+  <div id="adminPanel">
+    <button class="btn-primary" id="addMemberBtn">Add Family Member</button>
   </div>
+
+  <button class="btn-danger" id="logoutBtn">Logout</button>
 </div>
 
 <script type="module" src="./dashboard.js"></script>
 </body>
 </html>
+
